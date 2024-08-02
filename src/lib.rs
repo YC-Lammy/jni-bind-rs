@@ -18,12 +18,12 @@ mod primitives;
 pub mod java;
 
 #[derive(Debug, Clone)]
-pub struct GlobalRef<T: JBindingType<'static>> where for<'a> &'a T : JBindingRef<T>{
+pub struct GlobalRef<T: JBindingType<'static>> where for<'a> &'a T : JBindingRef<'a, T>{
     _ref: jni::objects::GlobalRef,
     _mark: PhantomData<T>,
 }
 
-impl<T> GlobalRef<T>  where T: JBindingType<'static>, for<'a> &'a T : JBindingRef<T>{
+impl<T> GlobalRef<T>  where T: JBindingType<'static>, for<'a> &'a T : JBindingRef<'a, T>{
     pub unsafe fn from_jni(global_ref: jni::objects::GlobalRef) -> Self {
         Self {
             _ref: global_ref,
@@ -38,7 +38,7 @@ impl<T> GlobalRef<T>  where T: JBindingType<'static>, for<'a> &'a T : JBindingRe
     }
 }
 
-impl<T> core::ops::Deref for GlobalRef<T>   where T: JBindingType<'static>, for<'a> &'a T : JBindingRef<T>{
+impl<T> core::ops::Deref for GlobalRef<T>   where T: JBindingType<'static>, for<'a> &'a T : JBindingRef<'a, T>{
     type Target = T;
     fn deref(&self) -> &Self::Target {
         unsafe{
@@ -49,7 +49,7 @@ impl<T> core::ops::Deref for GlobalRef<T>   where T: JBindingType<'static>, for<
 
 /// this trait should only be implemented by macro.
 /// Manually implementing this trait may cause undefined behaviour
-pub unsafe trait JBindingRef<T>{
+pub unsafe trait JBindingRef<'local, T>{
     unsafe fn as_ref(&self) -> &T;
 }
 
@@ -142,13 +142,13 @@ macro_rules! import_class {
             }
         }
         
-        unsafe impl<'local> $crate::JBindingRef<$name<'local>> for $name<'local>{
+        unsafe impl<'local> $crate::JBindingRef<'local, $name<'local>> for $name<'local>{
             unsafe fn as_ref(&self) -> &$name<'local>{
                 self
             }
         }
 
-        unsafe impl<'a, 'local> $crate::JBindingRef<$name<'local>> for &'a $name<'local>{
+        unsafe impl<'a, 'local> $crate::JBindingRef<'a, $name<'local>> for &'a $name<'local>{
             unsafe fn as_ref(&self) -> &$name<'local>{
                 self
             }
@@ -180,13 +180,13 @@ macro_rules! import_class {
                     }
                 }
 
-                unsafe impl<'local> $crate::JBindingRef<$parent_class<'local>> for $name<'local>{
+                unsafe impl<'local> $crate::JBindingRef<'local, $parent_class<'local>> for $name<'local>{
                     unsafe fn as_ref(&self) -> &$parent_class<'local>{
                         ::core::convert::AsRef::as_ref(self)
                     }
                 }
         
-                unsafe impl<'a, 'local> $crate::JBindingRef<$parent_class<'local>> for &'a $name<'local>{
+                unsafe impl<'a, 'local> $crate::JBindingRef<'a, $parent_class<'local>> for &'a $name<'local>{
                     unsafe fn as_ref(&self) -> &$parent_class<'local>{
                         ::core::convert::AsRef::as_ref(self)
                     }
@@ -236,7 +236,7 @@ macro_rules! import_class {
             }
 
             $(
-                pub fn new(env: &mut $crate::jni::JNIEnv<'local> $(, $ctor_arg : impl $crate::JBindingRef<$ctor_arg_ty>)*) -> Result<Self, $crate::jni::errors::Error> {
+                pub fn new(env: &mut $crate::jni::JNIEnv<'local> $(, $ctor_arg : impl $crate::JBindingRef<'local, $ctor_arg_ty>)*) -> Result<Self, $crate::jni::errors::Error> {
                     let class = Self::class(env)?;
 
                     const CTOR_SIG: &str = $crate::export::const_format::concatcp!(
@@ -362,7 +362,7 @@ macro_rules! import_class {
 
             $(
                 $crate::export::paste::paste!{
-                    pub fn [<$static_method:snake>](env: &mut $crate::jni::JNIEnv<'local> $(, $static_arg : impl $crate::JBindingRef<$static_arg_ty>)*) -> Result<$static_ret, $crate::jni::errors::Error> where $static_ret: $crate::JReturnType<'local>{
+                    pub fn [<$static_method:snake>](env: &mut $crate::jni::JNIEnv<'local> $(, $static_arg : impl $crate::JBindingRef<'local, $static_arg_ty>)*) -> Result<$static_ret, $crate::jni::errors::Error> where $static_ret: $crate::JReturnType<'local>{
                         let class = Self::class(env)?;
 
                         const METHOD_SIG: &str = $crate::export::const_format::concatcp!(
@@ -416,7 +416,7 @@ macro_rules! import_class {
             $(
                 $crate::export::paste::paste!{
                     $(#[doc=$doc])*
-                    pub fn [<$method:snake>](&self, env: &mut $crate::jni::JNIEnv<'local> $(, $arg : impl $crate::JBindingRef<$arg_ty>)*) -> Result<$ret, $crate::jni::errors::Error>{
+                    pub fn [<$method:snake>](&self, env: &mut $crate::jni::JNIEnv<'local> $(, $arg : impl $crate::JBindingRef<'local, $arg_ty>)*) -> Result<$ret, $crate::jni::errors::Error>{
                         let class = Self::class(env)?;
 
                         const METHOD_SIG: &str = $crate::export::const_format::concatcp!(

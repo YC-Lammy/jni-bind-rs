@@ -7,11 +7,16 @@ Made importing classes from java easy!
 
 This library provides the `import_class` macro that automatically implements the object structure. All the method IDs and classes are cached to increase performance.
 
+# Known Limitations
+
+- can only be compiled with nightly feature `anonymous_lifetime_in_impl_trait`.
+- static methods that returns an Object cannot be declared due to compiler not able to infer local lifetime.
+
 # Examples
 
 Basic usage of `import_class`:
 
-```
+```rust
 #![no_main]
 #![feature(anonymous_lifetime_in_impl_trait)]
 

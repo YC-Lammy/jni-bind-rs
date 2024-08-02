@@ -21,7 +21,7 @@ unsafe impl JBindingType<'static> for jboolean {
     }
 }
 
-unsafe impl JBindingRef<jboolean> for jboolean{
+unsafe impl JBindingRef<'static, jboolean> for jboolean{
     unsafe fn as_ref(&self) -> &jboolean {
         self
     }
@@ -51,7 +51,7 @@ unsafe impl JBindingType<'static> for jbyte {
     }
 }
 
-unsafe impl JBindingRef<Self> for jbyte{
+unsafe impl JBindingRef<'static, Self> for jbyte{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
@@ -81,7 +81,7 @@ unsafe impl JBindingType<'static> for jchar {
     }
 }
 
-unsafe impl JBindingRef<Self> for jchar{
+unsafe impl JBindingRef<'static, Self> for jchar{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
@@ -111,7 +111,7 @@ unsafe impl JBindingType<'static> for jshort {
     }
 }
 
-unsafe impl JBindingRef<Self> for jshort{
+unsafe impl JBindingRef<'static, Self> for jshort{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
@@ -141,7 +141,7 @@ unsafe impl JBindingType<'static> for jint {
     }
 }
 
-unsafe impl JBindingRef<Self> for jint{
+unsafe impl JBindingRef<'static, Self> for jint{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
@@ -171,7 +171,7 @@ unsafe impl JBindingType<'static> for jlong {
     }
 }
 
-unsafe impl JBindingRef<Self> for jlong{
+unsafe impl JBindingRef<'static, Self> for jlong{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
@@ -201,7 +201,7 @@ unsafe impl JBindingType<'static> for jfloat {
     }
 }
 
-unsafe impl JBindingRef<Self> for jfloat{
+unsafe impl JBindingRef<'static, Self> for jfloat{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
@@ -231,7 +231,7 @@ unsafe impl JBindingType<'static> for jdouble {
     }
 }
 
-unsafe impl JBindingRef<Self> for jdouble{
+unsafe impl JBindingRef<'static, Self> for jdouble{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
