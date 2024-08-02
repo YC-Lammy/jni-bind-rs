@@ -1,0 +1,9 @@
+[package]
+name = "jni-bind"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+jni = "^0.21"
+const_format = "^0.2"
+paste = "*"
