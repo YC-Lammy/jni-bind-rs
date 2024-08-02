@@ -2,6 +2,15 @@
 name = "jni-bind"
 version = "0.1.0"
 edition = "2021"
+authors = [ "YC Lam" ]
+license = "MIT"
+repository = "https://github.com/YC-Lammy/jni-bind-rs"
+description = "Made importing classes from java easy"
+keywords = ["jni", "java", "ffi"]
+categories = ["api-bindings"]
+documentation = "https://docs.rs/jni-bind"
+readme = "../README.md"
+rust-version = "1.65"
 
 [dependencies]
 jni = "^0.21"
