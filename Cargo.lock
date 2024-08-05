@@ -68,7 +68,7 @@ dependencies = [
 
 [[package]]
 name = "jni-bind"
-version = "0.1.2"
+version = "0.1.4"
 dependencies = [
  "const_format",
  "jni",

@@ -55,8 +55,8 @@ macro_rules! import_class {
     (
         $sig: expr;
         $name: ident;
-        $(extends $($parent_class: ident),+;)?
-        $(implements $($parent_interface: ident),+;)?
+        $(extends $($parent_class: ty),+;)?
+        $(implements $($parent_interface: ty),+;)?
         $(
             constructor ($($ctor_arg:ident : $ctor_arg_ty:ty),*);
         )?
