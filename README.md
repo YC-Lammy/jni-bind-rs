@@ -18,7 +18,6 @@ Basic usage of `import_class`:
 
 ```rust
 #![no_main]
-#![feature(anonymous_lifetime_in_impl_trait)]
 
 use jni_bind::import_class;
 use jni_bind::{jboolean, jint, jlong};
