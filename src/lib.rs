@@ -263,14 +263,14 @@ macro_rules! import_class {
                             let b = env.get_field_unchecked(
                                 self._obj.as_obj(),
                                 $crate::jni::objects::JFieldID::from_raw(field_id as _),
-                                <$field_ty as crate::JReturnType>::JNI_RETURN_TY
+                                <$field_ty as $crate::JReturnType>::JNI_RETURN_TY
                             )?;
 
                             return Ok(<$field_ty as $crate::JReturnType>::from_jvalue(env, b.as_jni()))
                         }
                     }
 
-                    pub fn [<set_ $field:snake>](&self, env: &mut $crate::jni::JNIEnv, value: $field_ty) -> Result<(), crate::jni::errors::Error>{
+                    pub fn [<set_ $field:snake>](&self, env: &mut $crate::jni::JNIEnv, value: $field_ty) -> Result<(), $crate::jni::errors::Error>{
                         let class = Self::class(env)?;
 
                         static CACHE: ::core::sync::atomic::AtomicU64 = ::core::sync::atomic::AtomicU64::new(0);
