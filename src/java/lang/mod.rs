@@ -1,4 +1,3 @@
-use std::marker::PhantomData;
 
 use jni::sys::*;
 use jni::JNIEnv;
@@ -25,13 +24,15 @@ import_class! {
     fn wait(&self, timeout_millis: jlong, nanos: jint) -> ();
 }
 
-impl<'local> Object<'local> {
+impl Object {
     // workaround for generic class object
-    pub fn get_class(&self, env: &mut JNIEnv<'local>) -> Result<Class, jni::errors::Error> {
-        let c = env.get_object_class(unsafe { jni::objects::JObject::from_raw(self._obj) })?;
+    pub fn get_class(&self, env: &mut JNIEnv) -> Result<Class, jni::errors::Error> {
+        let c = env.get_object_class(self._obj.as_obj())?;
+
+        let r = env.new_global_ref(c)?;
+        
         return Ok(Class {
-            _obj: c.into_raw(),
-            _mark: PhantomData,
+            _obj: r,
         });
     }
 }
@@ -48,6 +49,8 @@ import_class!{
     extends Object;
     constructor(value: jboolean);
 
+    field f: jboolean;
+    
     static fn compare(x: jboolean, y: jboolean) -> jint;
     static fn getBoolean(name: String) -> jboolean;
     static fn hashCode(value: jboolean) -> jint;

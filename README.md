@@ -9,8 +9,8 @@ This library provides the `import_class` macro that automatically implements the
 
 # Known Limitations
 
-- can only be compiled with nightly feature `anonymous_lifetime_in_impl_trait`.
-- static methods that returns an Object cannot be declared due to compiler not able to infer local lifetime.
+- cannot import generic classes and methods.
+- cannot import constants.
 
 # Examples
 

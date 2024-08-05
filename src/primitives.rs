@@ -1,15 +1,16 @@
 
 use jni::sys::*;
 use jni::objects::JValue;
+use jni::JNIEnv;
 
 use crate::{
-    JBindingRef,
+    IsA,
     JReturnType,
     JBindingType
 };
 
 
-unsafe impl JBindingType<'static> for jboolean {
+unsafe impl JBindingType for jboolean {
     const SIGNATURE: &'static str = "Z";
     const NAME: &'static str = "boolean";
 
@@ -21,24 +22,24 @@ unsafe impl JBindingType<'static> for jboolean {
     }
 }
 
-unsafe impl JBindingRef<'static, jboolean> for jboolean{
+unsafe impl IsA<jboolean> for jboolean{
     unsafe fn as_ref(&self) -> &jboolean {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jboolean {
+unsafe impl JReturnType for jboolean {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Boolean);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.z
     }
 }
 
-unsafe impl JBindingType<'static> for jbyte {
+unsafe impl JBindingType for jbyte {
     const SIGNATURE: &'static str = "B";
     const NAME: &'static str = "byte";
 
@@ -51,24 +52,24 @@ unsafe impl JBindingType<'static> for jbyte {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jbyte{
+unsafe impl IsA<Self> for jbyte{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jbyte {
+unsafe impl JReturnType for jbyte {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Byte);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.b
     }
 }
 
-unsafe impl JBindingType<'static> for jchar {
+unsafe impl JBindingType for jchar {
     const SIGNATURE: &'static str = "C";
     const NAME: &'static str = "char";
 
@@ -81,24 +82,24 @@ unsafe impl JBindingType<'static> for jchar {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jchar{
+unsafe impl IsA<Self> for jchar{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jchar {
+unsafe impl JReturnType for jchar {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Char);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.c
     }
 }
 
-unsafe impl JBindingType<'static> for jshort {
+unsafe impl JBindingType for jshort {
     const SIGNATURE: &'static str = "S";
     const NAME: &'static str = "short";
 
@@ -111,24 +112,24 @@ unsafe impl JBindingType<'static> for jshort {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jshort{
+unsafe impl IsA<Self> for jshort{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jshort {
+unsafe impl JReturnType for jshort {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Short);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.s
     }
 }
 
-unsafe impl JBindingType<'static> for jint {
+unsafe impl JBindingType for jint {
     const SIGNATURE: &'static str = "I";
     const NAME: &'static str = "int";
 
@@ -141,24 +142,24 @@ unsafe impl JBindingType<'static> for jint {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jint{
+unsafe impl IsA<Self> for jint{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jint {
+unsafe impl JReturnType for jint {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Int);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.i
     }
 }
 
-unsafe impl JBindingType<'static> for jlong {
+unsafe impl JBindingType for jlong {
     const SIGNATURE: &'static str = "J";
     const NAME: &'static str = "long";
 
@@ -171,24 +172,24 @@ unsafe impl JBindingType<'static> for jlong {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jlong{
+unsafe impl IsA<Self> for jlong{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jlong {
+unsafe impl JReturnType for jlong {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Long);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.j
     }
 }
 
-unsafe impl JBindingType<'static> for jfloat {
+unsafe impl JBindingType for jfloat {
     const SIGNATURE: &'static str = "F";
     const NAME: &'static str = "float";
 
@@ -201,24 +202,24 @@ unsafe impl JBindingType<'static> for jfloat {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jfloat{
+unsafe impl IsA<Self> for jfloat{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jfloat {
+unsafe impl JReturnType for jfloat {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Float);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.f
     }
 }
 
-unsafe impl JBindingType<'static> for jdouble {
+unsafe impl JBindingType for jdouble {
     const SIGNATURE: &'static str = "D";
     const NAME: &'static str = "double";
 
@@ -231,28 +232,28 @@ unsafe impl JBindingType<'static> for jdouble {
     }
 }
 
-unsafe impl JBindingRef<'static, Self> for jdouble{
+unsafe impl IsA<Self> for jdouble{
     unsafe fn as_ref(&self) -> &Self {
         self
     }
 }
 
-unsafe impl JReturnType<'static> for jdouble {
+unsafe impl JReturnType for jdouble {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType =
         jni::signature::ReturnType::Primitive(jni::signature::Primitive::Double);
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(_env: &mut JNIEnv, value: jvalue) -> Self {
         value.d
     }
 }
 
-pub struct JByteArray<'local> {
-    _obj: jni::objects::JByteArray<'local>,
+pub struct JByteArray {
+    _obj: jni::objects::GlobalRef,
 }
 
-unsafe impl<'local> JBindingType<'local> for JByteArray<'local> {
+unsafe impl JBindingType for JByteArray {
     const SIGNATURE: &'static str = "[B";
     const NAME: &'static str = "byte[]";
 
@@ -267,14 +268,17 @@ unsafe impl<'local> JBindingType<'local> for JByteArray<'local> {
     }
 }
 
-unsafe impl<'local> JReturnType<'local> for JByteArray<'local> {
+unsafe impl JReturnType for JByteArray {
     const SIGNATURE: &'static str = <Self as JBindingType>::SIGNATURE;
     const NAME: &'static str = <Self as JBindingType>::NAME;
     const JNI_RETURN_TY: jni::signature::ReturnType = jni::signature::ReturnType::Array;
 
-    unsafe fn from_jvalue(value: jvalue) -> Self {
+    unsafe fn from_jvalue(env: &mut JNIEnv, value: jvalue) -> Self {
+        let o = jni::objects::JByteArray::from_raw(value.l);
+        let r = env.new_global_ref(o).expect("failed to create global ref");
+
         JByteArray {
-            _obj: jni::objects::JByteArray::from_raw(value.l),
+            _obj: r,
         }
     }
 }

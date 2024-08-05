@@ -1,6 +1,6 @@
 [package]
 name = "jni-bind"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = [ "YC Lam" ]
 license = "MIT"
@@ -10,7 +10,7 @@ keywords = ["jni", "java", "ffi"]
 categories = ["api-bindings"]
 documentation = "https://docs.rs/jni-bind"
 readme = "./README.md"
-rust-version = "1.65"
+rust-version = "1.70"
 
 [dependencies]
 jni = "^0.21"
