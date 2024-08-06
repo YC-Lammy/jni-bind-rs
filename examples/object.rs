@@ -1,7 +1,7 @@
 #![no_main]
 
-use jni_bind::import_class;
-use jni_bind::{jboolean, jint, jlong};
+use jni_bind::{import_class, import_interface};
+use jni_bind::{jboolean, jint, jlong, jchar};
 
 import_class! {
     "java/lang/Object";
@@ -26,4 +26,11 @@ import_class! {
 import_class!{
     "java/lang/String";
     String;
+    implements CharSequence;
+}
+
+import_interface!{
+    "java/lang/CharSequence";
+    CharSequence;
+    fn charAt(&self, index: jint) -> jchar;
 }

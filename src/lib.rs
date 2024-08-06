@@ -13,7 +13,6 @@ pub mod export {
 }
 
 mod primitives;
-pub mod java;
 
 /// this trait should only be implemented by macro.
 /// Manually implementing this trait may cause undefined behaviour
@@ -158,6 +157,38 @@ macro_rules! import_class {
                     ::core::convert::AsRef::as_ref(self)
                 }
             }
+        )?
+
+        $(
+            $(
+                impl ::core::convert::AsRef<$parent_interface> for $name{
+                    fn as_ref(&self) -> &$parent_interface{
+                        unsafe{
+                            core::mem::transmute(self)
+                        }
+                    }
+                }
+    
+                impl From<$name> for $parent_interface{
+                    fn from(value: $name) -> $parent_interface{
+                        unsafe{
+                            core::mem::transmute(value)
+                        }
+                    }
+                }
+    
+                unsafe impl $crate::IsA<$parent_interface> for $name{
+                    unsafe fn as_ref(&self) -> &$parent_interface{
+                        ::core::convert::AsRef::as_ref(self)
+                    }
+                }
+        
+                unsafe impl $crate::IsA<$parent_interface> for &$name{
+                    unsafe fn as_ref(&self) -> &$parent_interface{
+                        ::core::convert::AsRef::as_ref(self)
+                    }
+                }
+            )*
         )?
 
         #[allow(unused)]
@@ -423,5 +454,137 @@ macro_rules! import_class {
             )*
         }
 
+    };
+}
+
+#[macro_export]
+macro_rules! import_interface {
+    (
+        $sig: expr;
+        $name: ident;
+        $(implements $($parent_interface: ty),+;)?
+        $(
+            $(#[doc=$doc:expr])*
+            fn $method:ident (&self $(, $arg:ident : $arg_ty:ty)*) -> $ret:ty;
+        )*
+    ) => {
+        #[repr(transparent)]
+        #[derive(Debug, Clone)]
+        pub struct $name{
+            _obj: $crate::jni::objects::GlobalRef,
+        }
+
+        unsafe impl $crate::JBindingType for $name {
+            const SIGNATURE: &'static str = concat!("L", $sig, ";");
+            const NAME: &'static str = $sig;
+
+            unsafe fn to_jvalue(&self) -> $crate::jni::sys::jvalue {
+                $crate::jni::sys::jvalue{
+                    l: self._obj.as_obj().as_raw()
+                }
+            }
+
+            unsafe fn to_jvalue_ref<'obj_ref>(&'obj_ref self) -> $crate::jni::objects::JValue<'_, 'obj_ref>{
+                $crate::jni::objects::JValue::Object(
+                    self._obj.as_obj()
+                )
+            }
+        }
+
+        unsafe impl $crate::JReturnType for $name {
+            const SIGNATURE: &'static str = <Self as $crate::JBindingType>::SIGNATURE;
+            const NAME: &'static str = <Self as $crate::JBindingType>::NAME;
+            const JNI_RETURN_TY: jni::signature::ReturnType = jni::signature::ReturnType::Object;
+
+            unsafe fn from_jvalue(env: &mut$crate::JNIEnv, value: $crate::jni::sys::jvalue) -> Self {
+                let o = $crate::jni::objects::JObject::from_raw(value.l);
+                let r = env.new_global_ref(o).expect("failed to create global ref");
+                Self {
+                    _obj: r,
+                }
+            }
+        }
+        
+        unsafe impl $crate::IsA<$name> for $name{
+            unsafe fn as_ref(&self) -> &$name{
+                self
+            }
+        }
+
+        unsafe impl $crate::IsA<$name> for &$name{
+            unsafe fn as_ref(&self) -> &$name{
+                self
+            }
+        }
+
+        $(
+            $(
+                impl ::core::convert::AsRef<$parent_interface> for $name{
+                    fn as_ref(&self) -> &$parent_class{
+                        unsafe{
+                            core::mem::transmute(self)
+                        }
+                    }
+                }
+    
+                impl From<$name> for $parent_interface{
+                    fn from(value: $name) -> $parent_interface{
+                        unsafe{
+                            core::mem::transmute(value)
+                        }
+                    }
+                }
+    
+                unsafe impl $crate::IsA<$parent_interface> for $name{
+                    unsafe fn as_ref(&self) -> &$parent_class{
+                        ::core::convert::AsRef::as_ref(self)
+                    }
+                }
+        
+                unsafe impl $crate::IsA<$parent_interface> for &$name{
+                    unsafe fn as_ref(&self) -> &$parent_class{
+                        ::core::convert::AsRef::as_ref(self)
+                    }
+                }
+            )*
+        )?
+
+        $crate::export::paste::paste!{
+            impl $name{
+                $(
+                    $(#[doc=$doc])*
+                    pub fn [<$method:snake>](&self, env: &mut $crate::jni::JNIEnv, $($arg: impl $crate::IsA<$arg_ty>),*) -> ::core::result::Result<$ret, $crate::jni::errors::Error>{
+
+                        const METHOD_SIG: &str = $crate::export::const_format::concatcp!(
+                            "(",
+                            $(
+                                <$arg_ty as $crate::JBindingType>::SIGNATURE,
+                            )*
+                            ")",
+                            <$ret as $crate::JReturnType>::SIGNATURE
+                        );
+
+                        let class = env.get_object_class(self._obj.as_obj())?;
+                        let method_id = env.get_method_id(class, stringify!($method), METHOD_SIG)?;
+
+                        unsafe{
+                            let r = env.call_method_unchecked(
+                                self._obj.as_obj(),
+                                method_id,
+                                <$ret as $crate::JReturnType>::JNI_RETURN_TY,
+                                &[
+                                    $(
+                                        <$arg_ty as $crate::JBindingType>::to_jvalue(unsafe{$crate::IsA::<$arg_ty>::as_ref(&$arg)})
+                                    ),*
+                                ]
+                            )?;
+
+                            return Ok(<$ret as $crate::JReturnType>::from_jvalue(env, r.as_jni()))
+                        };
+                    }
+                )*
+            }
+        }
+        
     };
 }
