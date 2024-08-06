@@ -55,7 +55,7 @@ macro_rules! import_class {
     (
         $sig: expr;
         $name: ident;
-        $(extends $($parent_class: ty),+;)?
+        $(extends $parent_class: ty;)?
         $(implements $($parent_interface: ty),+;)?
         $(
             constructor ($($ctor_arg:ident : $ctor_arg_ty:ty),*);
@@ -120,36 +120,44 @@ macro_rules! import_class {
             }
         }
         
-        $(
-            $(
-                impl ::core::convert::AsRef<$parent_class> for $name{
-                    fn as_ref(&self) -> &$parent_class{
-                        unsafe{
-                            core::mem::transmute(self)
-                        }
-                    }
-                }
-
-                impl From<$name> for $parent_class{
-                    fn from(value: $name) -> $parent_class{
-                        unsafe{
-                            core::mem::transmute(value)
-                        }
-                    }
-                }
-
-                unsafe impl $crate::IsA<$parent_class> for $name{
-                    unsafe fn as_ref(&self) -> &$parent_class{
-                        ::core::convert::AsRef::as_ref(self)
-                    }
-                }
         
-                unsafe impl $crate::IsA<$parent_class> for &$name{
-                    unsafe fn as_ref(&self) -> &$parent_class{
-                        ::core::convert::AsRef::as_ref(self)
+        $(
+            impl ::core::convert::AsRef<$parent_class> for $name{
+                fn as_ref(&self) -> &$parent_class{
+                    unsafe{
+                        core::mem::transmute(self)
                     }
                 }
-            )*
+            }
+
+            impl ::core::ops::Deref for $name{
+                type Target = $parent_class;
+                fn deref(&self) -> &$parent_class{
+                    unsafe{
+                        core::mem::transmute(self)
+                    }
+                }
+            }
+
+            impl From<$name> for $parent_class{
+                fn from(value: $name) -> $parent_class{
+                    unsafe{
+                        core::mem::transmute(value)
+                    }
+                }
+            }
+
+            unsafe impl $crate::IsA<$parent_class> for $name{
+                unsafe fn as_ref(&self) -> &$parent_class{
+                    ::core::convert::AsRef::as_ref(self)
+                }
+            }
+    
+            unsafe impl $crate::IsA<$parent_class> for &$name{
+                unsafe fn as_ref(&self) -> &$parent_class{
+                    ::core::convert::AsRef::as_ref(self)
+                }
+            }
         )?
 
         #[allow(unused)]
